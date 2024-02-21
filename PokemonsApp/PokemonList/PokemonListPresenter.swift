@@ -7,13 +7,24 @@
 
 import Foundation
 
-protocol PokemonListPresentationLogic {
-    func presentFetchedPokemonList(_ pokemonList: [Pokemon])
+protocol PokemonListPresenterInput {
+    func presentPokemons(_ pokemons: [Pokemon])
+    func presentError(_ error: Error)
 }
 
-class PokemonListPresenter: PokemonListPresentationLogic {
+protocol PokemonListPresenterOutput: AnyObject {
+    func displayPokemons(_ pokemons: [Pokemon])
+    func displayError(_ message: String)
+}
 
-    func presentFetchedPokemonList(_ pokemonList: [Pokemon]) {
-       
+class PokemonListPresenter: PokemonListPresenterInput {
+    weak var output: PokemonListPresenterOutput?
+    
+    func presentPokemons(_ pokemons: [Pokemon]) {
+        output?.displayPokemons(pokemons)
+    }
+    
+    func presentError(_ error: Error) {
+        output?.displayError(error.localizedDescription)
     }
 }

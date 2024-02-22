@@ -9,12 +9,4 @@ import Foundation
 
 struct Pokemon: Codable {
     let name: String
-//    let sprites: String
-//    let types: [String]
-//    let weight: Int
-//    let height: Int
-}
-
-struct DisplayedPokemon {
-    let name: String
 }

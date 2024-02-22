@@ -10,7 +10,7 @@ import Foundation
 
 class PokemonListInteractor {
     
-    var presenter = PokemonListPresenter()
+    var presenter: PokemonListPresenterInput?
     let worker = PokemonListWorker()
     var currentPage = 0
     
@@ -18,13 +18,10 @@ class PokemonListInteractor {
         worker.fetchPokemons(page: currentPage) { result in
             switch result {
             case .success(let pokemons):
-                self.presenter.presentPokemons(pokemons)
-//                for i in pokemons {
-//                    print(i)
-//                }
+                self.presenter?.presentPokemons(pokemons)
             case .failure(let error):
                 print(error)
-                self.presenter.presentError(error)
+                self.presenter?.presentError(error)
             }
         }
     }

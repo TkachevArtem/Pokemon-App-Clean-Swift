@@ -7,14 +7,40 @@
 
 import UIKit
 
+protocol PokemonListPresenterOutput: AnyObject {
+    func displayPokemons(_ pokemons: [Pokemon])
+    func displayError(_ message: String)
+}
+
 class PokemonListViewController: UIViewController {
+    
+    let pokemonDetailVC = PokemonDetailViewController()
     
     let pokemonTableView = UITableView()
     
-    var interactor = PokemonListInteractor()
+    var interactor: PokemonListInteractor?
     var pokemons: [Pokemon] = []
     
     var worker = PokemonListWorker()
+    
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super .init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        setup()
+    }
+    
+    required init?(coder: NSCoder) {
+        super .init(coder: coder)
+        setup()
+    }
+    
+    func setup() {
+        let viewController = self
+        let presenter = PokemonListPresenter()
+        let interactor = PokemonListInteractor()
+        interactor.presenter = presenter
+        presenter.output = viewController
+        viewController.interactor = interactor
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,21 +54,14 @@ class PokemonListViewController: UIViewController {
         pokemonTableView.dataSource = self
         pokemonTableView.delegate = self
         
-        interactor.fetchPokemons()
+        interactor?.fetchPokemons()
         
     }
 }
 
 extension PokemonListViewController: PokemonListPresenterOutput {
     func displayPokemons(_ pokemons: [Pokemon]) {
-        for i in pokemons {
-            print(i)
-        }
-//        self.pokemons.append(contentsOf: pokemons)
-        for i in pokemons {
-            self.pokemons.append(i)
-//            self.pokemonTableView.reloadData()
-        }
+        self.pokemons.append(contentsOf: pokemons)
         pokemonTableView.reloadData()
     }
     
@@ -67,7 +86,9 @@ extension PokemonListViewController: UITableViewDataSource {
 extension PokemonListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == pokemons.count - 1 {
-            interactor.loadNextPage()
+            interactor?.loadNextPage()
+        } else {
+            present(pokemonDetailVC, animated: true, completion: nil)
         }
     }
 }

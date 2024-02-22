@@ -12,11 +12,6 @@ protocol PokemonListPresenterInput {
     func presentError(_ error: Error)
 }
 
-protocol PokemonListPresenterOutput: AnyObject {
-    func displayPokemons(_ pokemons: [Pokemon])
-    func displayError(_ message: String)
-}
-
 class PokemonListPresenter: PokemonListPresenterInput {
     weak var output: PokemonListPresenterOutput?
     

@@ -19,6 +19,7 @@ class PokemonDetailViewController: UIViewController {
     //var pokemonDetail: [PokemonDetail] = []
     
     var worker = PokemonDetailWorker()
+    private(set) var router: (PokemonDetailRoutingLogic & PokemonDetailDataPassingProtocol)?
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super .init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -34,15 +35,19 @@ class PokemonDetailViewController: UIViewController {
         let viewController = self
         let presenter = PokemonDetailPresenter()
         let interactor = PokemonDetailInteractor()
+        let router = PokemonDetailRouter()
         interactor.presenter = presenter
         presenter.output = viewController
         viewController.interactor = interactor
+        viewController.router = router
+        router.dataPassing = interactor
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         interactor?.fetchPokemonDetail()
+        interactor?.fetchDetail()
     }
 }
 

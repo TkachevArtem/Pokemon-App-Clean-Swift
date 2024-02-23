@@ -15,13 +15,12 @@ protocol PokemonListPresenterOutput: AnyObject {
 class PokemonListViewController: UIViewController {
     
     let pokemonDetailVC = PokemonDetailViewController()
-    
     let pokemonTableView = UITableView()
-    
     var interactor: PokemonListInteractor?
-    var pokemons: [Pokemon] = []
-    
+    private(set) var router: PokemonRoutingLogic?
     var worker = PokemonListWorker()
+    
+    var pokemons: [Pokemon] = []
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super .init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -37,9 +36,12 @@ class PokemonListViewController: UIViewController {
         let viewController = self
         let presenter = PokemonListPresenter()
         let interactor = PokemonListInteractor()
+        let router = PokemonRouter()
         interactor.presenter = presenter
         presenter.output = viewController
         viewController.interactor = interactor
+        viewController.router = router
+        router.viewController = viewController
     }
     
     override func viewDidLoad() {
@@ -88,7 +90,7 @@ extension PokemonListViewController: UITableViewDelegate {
         if indexPath.row == pokemons.count - 1 {
             interactor?.loadNextPage()
         } else {
-            present(pokemonDetailVC, animated: true, completion: nil)
+            router?.navigateToPokemonDetail(pokemonId: 5)
         }
     }
 }

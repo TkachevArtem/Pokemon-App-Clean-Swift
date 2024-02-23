@@ -7,11 +7,17 @@
 
 import Foundation
 
-class PokemonDetailInteractor {
+protocol PokemonDetailStoreProtocol: AnyObject {
+    //var pokemon: Pokemon { get set }
+    var pokemonID: Int { get set }
+}
+
+class PokemonDetailInteractor: PokemonDetailStoreProtocol {
     
     var presenter: PokemonDetailPresenterInput?
     let worker = PokemonDetailWorker()
     var pokemonID = 2
+    //var pokemon: Pokemon = Pokemon(name: "Test")
     
     func fetchPokemonDetail() {
         worker.fetchPokemonDetail(pokemonID: pokemonID) { result in
@@ -23,5 +29,9 @@ class PokemonDetailInteractor {
                 self.presenter?.presentError(error)
             }
         }
+    }
+    
+    func fetchDetail() {
+        print(pokemonID)
     }
 }

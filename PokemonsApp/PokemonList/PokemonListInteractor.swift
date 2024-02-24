@@ -27,7 +27,16 @@ class PokemonListInteractor {
     }
     
     func loadNextPage() {
-        currentPage += 1
-        fetchPokemons()
+        if currentPage < 65 {
+            currentPage += 1
+            fetchPokemons()
+        }
+    }
+    
+    func backToPreviousPage() {
+        if currentPage > 0 {
+            currentPage -= 1
+            fetchPokemons()
+        }
     }
 }

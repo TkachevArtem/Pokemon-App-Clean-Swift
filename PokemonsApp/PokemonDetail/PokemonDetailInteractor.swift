@@ -6,21 +6,22 @@
 //
 
 import Foundation
+import Alamofire
 
 protocol PokemonDetailStoreProtocol: AnyObject {
-    //var pokemon: Pokemon { get set }
-    var pokemonID: Int { get set }
+    var pokemon: Pokemon { get set }
+    //var pokemonID: Int { get set }
 }
 
 class PokemonDetailInteractor: PokemonDetailStoreProtocol {
     
     var presenter: PokemonDetailPresenterInput?
     let worker = PokemonDetailWorker()
-    var pokemonID = 2
-    //var pokemon: Pokemon = Pokemon(name: "Test")
+    //var pokemonID = 2
+    var pokemon: Pokemon = Pokemon(name: "Test Name", url: "Test URL")
     
     func fetchPokemonDetail() {
-        worker.fetchPokemonDetail(pokemonID: pokemonID) { result in
+        worker.fetchPokemonDetail(pokemonURL: pokemon.url) { result in
             switch result {
             case .success(let pokemonDetail):
                 self.presenter?.presentPokemonDetail(pokemonDetail)
@@ -32,6 +33,8 @@ class PokemonDetailInteractor: PokemonDetailStoreProtocol {
     }
     
     func fetchDetail() {
-        print(pokemonID)
+        print(pokemon.name)
     }
 }
+
+

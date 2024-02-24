@@ -14,8 +14,12 @@ protocol PokemonListPresenterOutput: AnyObject {
 
 class PokemonListViewController: UIViewController {
     
-    let pokemonDetailVC = PokemonDetailViewController()
     let pokemonTableView = UITableView()
+    let currentPageLabel = UILabel()
+    let nextPageButton = UIButton()
+    let previousPageButton = UIButton()
+    
+    let pokemonDetailVC = PokemonDetailViewController()
     var interactor: PokemonListInteractor?
     private(set) var router: PokemonRoutingLogic?
     var worker = PokemonListWorker()
@@ -46,18 +50,44 @@ class PokemonListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBlue
-        pokemonTableView.frame = view.bounds
-        pokemonTableView.dataSource = self
-        pokemonTableView.delegate = self
-        pokemonTableView.register(UITableViewCell.self, forCellReuseIdentifier: "PokemonCell")
-        view.addSubview(pokemonTableView)
+        view.backgroundColor = .systemBackground
+        setupConstraints()
+        setupUIElements()
+        setupTableView()
         
         pokemonTableView.dataSource = self
         pokemonTableView.delegate = self
         
         interactor?.fetchPokemons()
         
+        nextPageButton.addTarget(self, action: #selector(nextPageButtonTapped), for: .touchUpInside)
+        previousPageButton.addTarget(self, action: #selector(previousPageButtonTapped), for: .touchUpInside)
+        
+    }
+    
+    @objc private func nextPageButtonTapped() {
+        pokemons.removeAll()
+        interactor?.loadNextPage()
+        currentPageLabel.text = "\((interactor?.currentPage ?? 0) + 1)"
+    }
+    
+    @objc private func previousPageButtonTapped() {
+        pokemons.removeAll()
+        interactor?.backToPreviousPage()
+        currentPageLabel.text = "\((interactor?.currentPage ?? 0) + 1)"
+    }
+    
+    private func setupUIElements() {
+        currentPageLabel.text = "\((interactor?.currentPage ?? 0) + 1)"
+        currentPageLabel.textAlignment = .center
+        nextPageButton.setImage(UIImage(systemName: "arrowshape.forward.fill"), for: .normal)
+        previousPageButton.setImage(UIImage(systemName: "arrowshape.backward.fill"), for: .normal)
+    }
+    
+    private func setupTableView() {
+        pokemonTableView.dataSource = self
+        pokemonTableView.delegate = self
+        pokemonTableView.register(UITableViewCell.self, forCellReuseIdentifier: "PokemonCell")
     }
 }
 
@@ -87,11 +117,48 @@ extension PokemonListViewController: UITableViewDataSource {
 
 extension PokemonListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == pokemons.count - 1 {
-            interactor?.loadNextPage()
-        } else {
-            router?.navigateToPokemonDetail(pokemonId: 5)
-        }
+            router?.navigateToPokemonDetail(pokemon: pokemons[indexPath.row])
     }
 }
 
+extension PokemonListViewController {
+    private func setupConstraints() {
+        pokemonTableView.translatesAutoresizingMaskIntoConstraints = false
+        currentPageLabel.translatesAutoresizingMaskIntoConstraints = false
+        nextPageButton.translatesAutoresizingMaskIntoConstraints = false
+        previousPageButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(pokemonTableView)
+        view.addSubview(currentPageLabel)
+        view.addSubview(nextPageButton)
+        view.addSubview(previousPageButton)
+        
+        NSLayoutConstraint.activate([
+            currentPageLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
+            currentPageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            currentPageLabel.widthAnchor.constraint(equalToConstant: 40),
+            currentPageLabel.heightAnchor.constraint(equalToConstant: 20)
+        ])
+        
+        NSLayoutConstraint.activate([
+            nextPageButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
+            nextPageButton.leadingAnchor.constraint(equalTo: currentPageLabel.trailingAnchor, constant: 20),
+            nextPageButton.widthAnchor.constraint(equalToConstant: 40),
+            nextPageButton.heightAnchor.constraint(equalToConstant: 20)
+        ])
+        
+        NSLayoutConstraint.activate([
+            previousPageButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
+            previousPageButton.trailingAnchor.constraint(equalTo: currentPageLabel.leadingAnchor, constant: -20),
+            previousPageButton.widthAnchor.constraint(equalToConstant: 40),
+            previousPageButton.heightAnchor.constraint(equalToConstant: 20)
+        ])
+        
+        NSLayoutConstraint.activate([
+            pokemonTableView.topAnchor.constraint(equalTo: view.topAnchor),
+            pokemonTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            pokemonTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            pokemonTableView.bottomAnchor.constraint(equalTo: currentPageLabel.topAnchor, constant: -10)
+        ])
+    }
+}

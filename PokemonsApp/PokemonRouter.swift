@@ -9,16 +9,16 @@ import Foundation
 import UIKit
 
 protocol PokemonRoutingLogic {
-    func navigateToPokemonDetail(pokemonId: Int)
+    func navigateToPokemonDetail(pokemon: Pokemon)
 }
 
 class PokemonRouter: PokemonRoutingLogic {
     
     weak var viewController: PokemonListViewController?
     
-    func navigateToPokemonDetail(pokemonId: Int) {
+    func navigateToPokemonDetail(pokemon: Pokemon) {
         guard let pokemonDetailVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PokemonDetailViewController") as? PokemonDetailViewController else { return }
-        pokemonDetailVC.router?.dataPassing?.pokemonID = pokemonId
+        pokemonDetailVC.router?.dataPassing?.pokemon = pokemon
         viewController?.navigationController?.pushViewController(pokemonDetailVC, animated: true)
     }
 }

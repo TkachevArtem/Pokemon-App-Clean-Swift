@@ -13,21 +13,23 @@ class PokemonListInteractor {
     var presenter: PokemonListPresenterInput?
     let worker = PokemonListWorker()
     var currentPage = 0
+    var isData = false
     
     func fetchPokemons() {
         worker.fetchPokemons(page: currentPage) { result in
             switch result {
             case .success(let pokemons):
+                self.isData = true
                 self.presenter?.presentPokemons(pokemons)
             case .failure(let error):
-                print(error)
                 self.presenter?.presentError(error)
+                self.isData = false
             }
         }
     }
     
     func loadNextPage() {
-        if currentPage < 65 {
+        if isData, currentPage < 65 {
             currentPage += 1
             fetchPokemons()
         }

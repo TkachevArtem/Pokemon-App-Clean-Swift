@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-import Alamofire
 
 protocol PokemonDetailPresenterOutput: AnyObject {
     func displayPokemonDetail(_ pokemonDetail: PokemonDetail)
@@ -23,7 +22,6 @@ class PokemonDetailViewController: UIViewController {
     let pokemonHeightLabel = UILabel()
     
     var interactor: PokemonDetailInteractor?
-    //var pokemonDetail: [PokemonDetail] = []
     
     var worker = PokemonDetailWorker()
     private(set) var router: (PokemonDetailRoutingLogic & PokemonDetailDataPassingProtocol)?
@@ -83,7 +81,7 @@ extension PokemonDetailViewController: PokemonDetailPresenterOutput {
         }
     }
     func displayError(_ message: String) {
-        print(message)
+        showAlert(title: "Sorry", message: "Pokemon does not found")
     }
 }
 

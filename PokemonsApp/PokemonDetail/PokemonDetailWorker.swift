@@ -10,10 +10,7 @@ import Alamofire
 
 class PokemonDetailWorker {
     
-    //private let baseURL = "https://pokeapi.co/api/v2/pokemon/"
-    
     func fetchPokemonDetail(pokemonURL: String, completion: @escaping (Result<PokemonDetail, Error>) -> Void) {
-        //let url = baseURL + "\(pokemonID)"
         let url = pokemonURL
         AF.request(url).responseDecodable(of: PokemonDetail.self) { response in
             switch response.result {
